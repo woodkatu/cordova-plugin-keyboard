@@ -171,7 +171,7 @@ static IMP WKOriginalImp;
         return;
     }
 
-    self.webView.scrollView.scrollEnabled = YES;
+    self.webView.scrollView.scrollEnabled = NO;
 
     CGRect screen = [[UIScreen mainScreen] bounds];
     CGRect statusBar = [[UIApplication sharedApplication] statusBarFrame];
@@ -198,8 +198,11 @@ static IMP WKOriginalImp;
         screen.size.height -= keyboardIntersection.size.height;
         self.webView.scrollView.scrollEnabled = !self.disableScrollingInShrinkView;
     }
-
+    
     // A view's frame is in its superview's coordinate system so we need to convert again
+    // need to subduction the height of keyboard/scale
+    CGFloat scale = [UIScreen mainScreen].scale;
+    screen.size.height = screen.size.height - keyboard.size.height/scale;
     self.webView.frame = [self.webView.superview convertRect:screen fromView:self.webView];
 }
 
