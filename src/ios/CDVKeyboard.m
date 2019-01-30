@@ -99,6 +99,7 @@
                                                                  CGRect keyboard = ((NSValue*)notification.userInfo[@"UIKeyboardFrameEndUserInfoKey"]).CGRectValue;
                                                                  CGRect intersection = CGRectIntersection(screen, keyboard);
                                                                  CGFloat height = MIN(intersection.size.width, intersection.size.height);
+                                                                 height = height/[UIScreen mainScreen].scale;
                                                                  [weakSelf.commandDelegate evalJs: [NSString stringWithFormat:@"cordova.fireWindowEvent('keyboardHeightWillChange', { 'keyboardHeight': %f })", height]];
                                                              }];
 
@@ -201,8 +202,11 @@ static IMP WKOriginalImp;
     
     // A view's frame is in its superview's coordinate system so we need to convert again
     // need to subduction the height of keyboard/scale
-    CGFloat scale = [UIScreen mainScreen].scale;
-    screen.size.height = screen.size.height - keyboard.size.height/scale;
+    if(self.keyboardIsVisible) {
+        CGFloat scale = [UIScreen mainScreen].scale;
+        screen.size.height = screen.size.height - keyboard.size.height/scale;
+    }
+
     self.webView.frame = [self.webView.superview convertRect:screen fromView:self.webView];
 }
 
